@@ -1,0 +1,12 @@
+Replace this placeholder with these three completed files:
+
+  group_declaration_of_honor.pdf
+  student_1_ai_declaration.pdf
+  student_2_ai_declaration.pdf
+
+The student order must match the order used in the group declaration.
+
+Editable Word templates are supplied in ../../declaration_templates/. Complete
+and sign one group declaration and one individual AI-use declaration per
+student, then export them to the exact PDF filenames shown above. Do not include
+the blank Word templates in the submitted declarations directory.
