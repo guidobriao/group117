@@ -1,15 +1,15 @@
-"""Structurally valid zero-prediction example; replace it with the final model."""
+"""Grading interface: load the fitted model and predict one-day-ahead chlorophyll."""
 
 from __future__ import annotations
 
-from pathlib import Path
 import pickle
+from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
 
-from utils import constant_prediction
+from utils import build_single_row
 
 
 def load_model(model_path: str | Path) -> Any:
@@ -19,15 +19,23 @@ def load_model(model_path: str | Path) -> Any:
 
 
 def predict(model: Any, history_df: pd.DataFrame, day_features_df: pd.DataFrame) -> np.ndarray:
-    """Return the dummy model's constant as a NumPy array with shape (1,).
+    """Return the predicted chlorophyll-a concentration as a NumPy array (1,).
 
-    history_df contains all observations strictly before the prediction date,
-    including past chlorophyll. day_features_df contains exactly the current
-    day's exogenous variables and date, but never current-day chlorophyll.
-
-    This example deliberately does not use either DataFrame. Students must
-    replace it with their lag construction, saved input preprocessing, and
-    prediction procedure. Fitted sklearn.preprocessing input objects are
-    allowed; library pipelines and output-processing wrappers are not.
+    Steps (all explicit):
+    1. build the lagged feature row from history + current exogenous data
+    2. order features as during training
+    3. clip exogenous values at the stored training percentiles
+    4. standardize with the stored training means/stds
+    5. predict and enforce a non-negative finite output
     """
-    return np.asarray([constant_prediction(model)], dtype=float)
+    state = model
+    row = build_single_row(history_df, day_features_df, state["lag_spec"])
+
+    x = np.array([row.loc[row.index[-1], c] for c in state["feature_cols"]], dtype=float)
+
+    x = np.clip(x, state["clip_lo"], state["clip_hi"])
+    x = (x - state["mu"]) / state["sd"]
+
+    y_hat = float(state["model"].predict(x.reshape(1, -1))[0])
+    y_hat = max(y_hat, 0.0)   # chlorophyll concentration is non-negative
+    return np.asarray([y_hat], dtype=float)
