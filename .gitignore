@@ -4,3 +4,10 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 .idea/
+# Dataset e risultati: da non versionare
+data/
+results/
+
+# File locali, non versionati
+requirements-dev.txt
+ML_LAB_PART_1_MANUAL_V2.pdf
