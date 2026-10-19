@@ -11,3 +11,8 @@ results/
 # File locali, non versionati
 requirements-dev.txt
 ML_LAB_PART_1_MANUAL_V2.pdf
+
+# materiale sottomissione - non versionare
+group117/declarations/
+group117/README_SUBMISSION.txt
+declaration_templates/
